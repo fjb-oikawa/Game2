@@ -18,7 +18,10 @@ namespace Game2
         TimeCounter timeCount;
         Chara ship;
         Chara[] missile;
+        Chara[] enemy;
         int mtime;
+        int etime;
+        Random rand = new Random();
         public Form1()
         {
             InitializeComponent();
@@ -35,6 +38,13 @@ namespace Game2
                 missile[i] = new Chara(Properties.Resources.Missile);
                 missile[i].Visible = false;
                 charaList.Add(missile[i]);
+            }
+            enemy = new Chara[10];
+            for (int i = 0; i < enemy.Length; i++)
+            {
+                enemy[i] = new Chara(Properties.Resources.Enemy);
+                enemy[i].Visible = false;
+                charaList.Add(enemy[i]);
             }
 
             charaList.Add(ship);
@@ -71,11 +81,58 @@ namespace Game2
                 }
                 mtime--;
                 //ミサイルの移動処理
-                for (int j=0;j<missile.Length;j++)
+                for (int j = 0; j < missile.Length; j++)
+                {
                     missile[j].Y -= 2;
+                    if (missile[j].Y < -24)
+                        missile[j].Visible = false;
+                }
 
-                //リミットチェック
-                if (ship.Y < 0)
+                //敵の出現
+                if(rand.Next()%100 == 0)
+                {
+                    for (int j = 0; j < enemy.Length; j++)
+                    {
+                        if(enemy[j].Visible == false)
+                        {
+                            enemy[j].Visible = true;
+                            enemy[j].X = rand.Next() % (ClientSize.Width - 32);
+                            enemy[j].Y = -32;
+                            break;
+                        }
+                    }
+                }
+                //敵の移動
+                for (int j = 0; j < enemy.Length; j++)
+                {
+                    if (enemy[j].Visible == true)
+                    {
+                        enemy[j].Y += 4;
+                        if (enemy[j].Y > ClientSize.Height)
+                            enemy[j].Visible = false;
+                    }
+                }
+                //接触判定
+                for (int j = 0; j < missile.Length; j++)
+                {
+                    if (missile[j].Visible == false)
+                        continue;
+                    for (int k = 0; k < enemy.Length; k++)
+                    {
+                        if (enemy[k].Visible == false)
+                            continue;
+                        if(enemy[k].X < missile[j].X2 && enemy[k].X2 > missile[j].X &&
+                            enemy[k].Y < missile[j].Y2 && enemy[k].Y2 > missile[j].Y)
+                        {
+                            missile[j].Visible = false;
+                            enemy[k].Visible = false;
+                        }
+
+                    }
+                }
+
+                    //リミットチェック
+                    if (ship.Y < 0)
                     ship.Y = 0;
                 if (ship.X < 0)
                     ship.X = 0;
