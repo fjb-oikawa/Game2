@@ -47,5 +47,33 @@ namespace Game2
             if (Visible)
                 g.DrawImage(bitmap, X, Y);
         }
+        public int Width
+        {
+            get
+            {
+                return bitmap.Width;
+            }
+        }
+        public int Height
+        {
+            get
+            {
+                return bitmap.Height;
+            }
+        }
+        public int X2
+        {
+            get
+            {
+                return X + bitmap.Width;
+            }
+        }
+        public int Y2
+        {
+            get
+            {
+                return Y + bitmap.Height;
+            }
+        }
     }
 }
